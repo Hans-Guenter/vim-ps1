@@ -34,8 +34,16 @@ syn keyword ps1CommentTodo TODO FIXME XXX TBD HACK NOTE contained
 syn match ps1CDocParam /.*/ contained
 syn match ps1CommentDoc /^\s*\zs\.\w\+\>/ nextgroup=ps1CDocParam contained
 syn match ps1CommentDoc /#\s*\zs\.\w\+\>/ nextgroup=ps1CDocParam contained
+" syn match ps1Comment /#\(region\)\@!.*/ contains=ps1CommentTodo,ps1CommentDoc,@Spell
 syn match ps1Comment /#.*/ contains=ps1CommentTodo,ps1CommentDoc,@Spell
+if !exists('g:ps1_nofold_region')
+	syn region ps1Region matchgroup=ps1Comment start=/^\s*#region.*$/ matchgroup=ps1Comment end=/^\s*#endregion.*$/ transparent fold keepend extend
+endif
+if !exists('g:ps1_nofold_blocks')
+syn region ps1Comment start="<#" end="#>" contains=ps1CommentTodo,ps1CommentDoc,@Spell fold
+else
 syn region ps1Comment start="<#" end="#>" contains=ps1CommentTodo,ps1CommentDoc,@Spell
+endif
 
 " Language keywords and elements
 syn keyword ps1Conditional if else elseif switch default
@@ -134,10 +142,6 @@ syn match ps1BuiltIn "$\%(ofs\|shellid\|stacktrace\)\>"
 " Folding blocks
 if !exists('g:ps1_nofold_blocks')
 	syn region ps1Block start=/{/ end=/}/ transparent fold
-endif
-
-if !exists('g:ps1_nofold_region')
-	syn region ps1Region start=/#region/ end=/#endregion/ transparent fold keepend extend
 endif
 
 if !exists('g:ps1_nofold_sig')
